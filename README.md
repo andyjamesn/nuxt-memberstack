@@ -1,12 +1,18 @@
 - [Memberstack Module for Nuxt 3](#memberstack-module-for-nuxt-3)
-  - [Getting started](#getting-started)
+  - [Setup - Get Started](#setup---get-started)
     - [Requirements](#requirements)
     - [Nuxt Config](#nuxt-config)
+  - [Using the module](#using-the-module)
     - [Global instance available](#global-instance-available)
     - [Composables](#composables)
       - [Auth Composable](#auth-composable)
         - [Login](#login)
+        - [Reset password](#reset-password)
       - [Member Composable](#member-composable)
+  - [Middleware for route protection and redirects](#middleware-for-route-protection-and-redirects)
+    - [Global Middleware - On All routes](#global-middleware---on-all-routes)
+    - [Named middleware - On specific routes](#named-middleware---on-specific-routes)
+    - [Memberstack Role based Middleware](#memberstack-role-based-middleware)
   - [Development](#development)
 
 # Memberstack Module for Nuxt 3
@@ -104,7 +110,7 @@ await login({
 
 There is no composable for this as there it no need to update the state
 
-Get memberstack context from Nuxt and use to
+Get memberstack context from Nuxt and use to trigger reset email
 
 ```javascript
 const { $memberstack: memberstack } = useNuxtApp()
