@@ -8,7 +8,12 @@
       - [Auth Composable](#auth-composable)
         - [Login](#login)
         - [Reset password](#reset-password)
+          - [Request token email](#request-token-email)
+          - [Use token to reset password](#use-token-to-reset-password)
       - [Member Composable](#member-composable)
+  - [Plans](#plans)
+    - [Setting a plan (Saving it to store/state)](#setting-a-plan-saving-it-to-storestate)
+    - [Displaying plans](#displaying-plans)
   - [Middleware for route protection and redirects](#middleware-for-route-protection-and-redirects)
     - [Global Middleware - On All routes](#global-middleware---on-all-routes)
     - [Named middleware - On specific routes](#named-middleware---on-specific-routes)
@@ -116,9 +121,25 @@ Get memberstack context from Nuxt and use to trigger reset email
 const { $memberstack: memberstack } = useNuxtApp()
 ```
 
+###### Request token email
+
 ```Javascript
-await memberstack.sendResetEmailPassword({
+await memberstack.sendMemberResetPasswordEmail({
   email: "john@doe.com",
+})
+```
+
+###### Use token to reset password
+
+After token is received, use this call to reset the password. You can also set a redirect back to the login page after password has been successfully reset.
+
+The member object is returned if you want to use it to display a message to the user. But the user does need to login again.
+
+```Javascript
+const member = await resetPassword({
+  token: '123456',
+  newPassword: '54321qwerty',
+  redirect: '/login'
 })
 ```
 
@@ -131,6 +152,40 @@ const { getMember: member, updateMember } = useMemberStackMember()
 ```jsx
 <template>
   Welcome, {{member.auth.email}}
+</template>
+```
+
+## Plans
+
+Use the `useMemberStackPlans()` composable to set and get plans.
+
+```javascript
+const { setPlan, setPlans, plan, plans } = useMemberStackPlans()
+```
+
+Setting a plan or plans makes it available as reactive state in the store. Once set you can then access the them and display them on your page
+
+### Setting a plan (Saving it to store/state)
+
+Set a single plan
+
+```javascript
+await setPlan('pln_cl1....')
+```
+
+Set all active or inactive plans
+
+```javascript
+await setPlans('ACTIVE')
+```
+
+### Displaying plans
+
+Now you can use them in your page
+
+```jsx
+<template>
+  <div v-for="(plan, index) in plans" :key="index">{{ plan.name }}</div>
 </template>
 ```
 
@@ -200,6 +255,16 @@ export default defineNuxtRouteMiddleware(() => {
     }
   }
 })
+```
+
+Now on any pages where only admin users are allowed you just need to define the middleware
+
+```jsx
+<script setup lang="ts">
+definePageMeta({
+  middleware: ['auth-admin']
+})
+</script>
 ```
 
 ## Development
